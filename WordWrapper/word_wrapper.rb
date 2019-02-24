@@ -20,7 +20,7 @@ FILE_PREFIX = 'ww_'
 FILE_SUFFIX = ''
 ###############################################################################
 
-# Wrapper Function that calls functions in the order we need them.
+# Wrapper Method that calls methods in the order needed.
 def main (max_char, prefix, suffix)
     # Variable Definitions
     input_folder = 'Original/'  # Folder of original files
@@ -34,21 +34,17 @@ def main (max_char, prefix, suffix)
     check_user_variables()
     # Get the name of the file that will be word wrapped.
     file_name = get_input_file_name()
-  #  debug_log(file_name)
     # Concatenate the folder name and file name to give a path so that the
     # file can be searched for later.
     file_path = input_folder + file_name
-   # debug_log(file_path)
     # Check that the file_path is valid, if not the program will exit.
     check_input_file(file_path)
     # Now that the file path is vaild, read the file contents and save to
     # the array.
     original_arr = read_input_file(file_path)
- #   debug_log(original_arr)
     # Check the original_arr and make sure that no comment line is longer than
     # the max specified 
     wordwrapped_arr = word_wrap(original_arr, max_char)
-  #  debug_log(wordwrapped_arr)
     # Create a path for the output file to go
     output_path = create_output_path(output_folder, file_name, prefix, suffix)
     # Write the formatted array to the output file
@@ -61,6 +57,7 @@ def get_input_file_name ( )
     name = gets().strip()
     return name
 end
+
 
 def check_input_file ( path )
     # Check if the file the user gave actually exists at the path
@@ -139,9 +136,9 @@ def format_line ( line, max_line_length )
     # Loop each word and add it to the formatted_line string
     words.each do | word |    
         if((formatted_line.length() + word.length() ) + 1 <= max_line_length)
-            # If the line + the new word will be less that te max allowed length
-            # add the word to the string. The + 1 is to account for the space 
-            # that is added between words.
+            # If the line + the new word will be less that the max allowed
+            # length add the word to the string. The + 1 is to account for the
+            # fact that a space is added between words.
             formatted_line += ' ' + word
         else
             # If the line + word will be too long, push that line to the new
@@ -171,11 +168,11 @@ def create_output_path (folder, filename, prefix, suffix)
 end
 
 def write_formatted_file (word_wrapped_array, filepath)
-    # Create a new file and open it 'w' for new empty write file
+    # Create a new file and open it. 'w' is flag for  a new, empty, write file
     File.open(filepath, 'w') do | file |
         # Loop the formatted array
         word_wrapped_array.each do | line |
-            # Print each new line to the array
+            # Print each new line to the file
             file.puts(line)
         end
     end 
@@ -186,6 +183,10 @@ def check_user_variables()
     if(!MAX_CHAR_PER_LINE.is_a?(Integer))
         abort("MAX_CHAR_PER_LINE must be an Integer it is currently a #{MAX_CHAR_PER_LINE.class()}")
     end
+    # Check that MAX_CHAR_PER_LINE is not to small
+    if(MAX_CHAR_PER_LINE =< 11)
+        abort("MAX_CHAR_PER_LINE must be 12 or greater, it is currently #{MAX_CHAR_PER_LINE}")
+    end
     # Check that FILE_PREFIX and FILE_SUFFIX are strings
     if(!FILE_PREFIX.is_a?(String))
         abort("FILE_PREFIX must be a String it is currently a #{FILE_PREFIX.class()}")
@@ -195,7 +196,7 @@ def check_user_variables()
     end
 end
 
-# helper function to 'puts' data to the console, just makes it easier to find
+# helper method to 'puts' data to the console, just makes it easier to find
 # and remove calls to it once its no longer needed.
 def debug_log( arg )
     print('DEBUG: ')
@@ -208,7 +209,7 @@ is_running = true
 while(is_running)
     # Clear the terminal
     system 'clear'
-    # Call to main function to run the program
+    # Call the main method to run the program
     main(MAX_CHAR_PER_LINE, FILE_PREFIX, FILE_SUFFIX)
     # Ask the user if they need to convert more files
     puts("Enter 'y' to convert another file.")
