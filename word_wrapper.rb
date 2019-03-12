@@ -23,23 +23,20 @@ FILE_SUFFIX = ''.freeze
 # Wrapper Method that calls methods in the order needed.
 def main(max_char, prefix, suffix)
   # Variable Definitions
-  input_folder = 'Original/'  # Folder of original files
-  output_folder = 'Wrapped/'  # Folder of processed files
   # Check if USER VARIABLES are valid.
-  unless check_user_variables
-    puts 'Check USER VARIABLES, some are invalid'
-  end
+  raise ArgumentError, 'Invaild user variables.' unless check_user_variables
+
   # Get the name of the file that will be word wrapped.
   file_name = ask_input_file_name
   # Concatenate the folder name and file name to give a path so that the
   # file can be searched for later.
-  file_path = input_folder + file_name
+  file_path = 'Original/' + file_name
   original_arr = read_input_file(file_path)
   # Check the original_arr and make sure that no comment line is longer than
-  # the max specified 
+  # the max specified
   wordwrapped_arr = word_wrap(original_arr, max_char)
   # Create a path for the output file to go
-  output_path = create_output_path(output_folder, file_name, prefix, suffix)
+  output_path = create_output_path('Wrapped/', file_name, prefix, suffix)
   # Write the formatted array to the output file
   write_formatted_file(wordwrapped_arr, output_path)
 end
@@ -61,9 +58,7 @@ end
 
 def read_input_file(filepath)
   # Check that the file_path is valid, if not the program will exit.
-  unless File.exist?(filepath)
-    no_file_error(filepath)
-  end
+  no_file_error(filepath) unless File.exist?(filepath)
   # Array to store the lines of the file
   lines = []
   # Opens the file it the path and loops ecah line
@@ -84,9 +79,7 @@ def word_wrap(original_array, max_line_length)
       # Format the line and get returned an array of short lines
       new_lines = format_line(line, max_line_length)
       # loop these new lines and add them to the formatted array
-      new_lines.each do |wrapped_line|
-        wrapped_lines.push(wrapped_line)
-      end
+      new_lines.each { |wrapped_line| wrapped_lines.push(wrapped_line) }
     else
       # If the line doesn't need or cant be formatted just push it
       wrapped_lines.push(line)
@@ -99,7 +92,9 @@ def line_needs_formating?(line, max_line_length)
   # Check to see if the line is a comment
   if line[0] == '#'
     # Check the length of the line
-    !(line.length < max_line_length)
+    false if max_line_length > line.length
+    # if the line is too long then it need formatting
+    true
   else
     # This only formats comments if there is no '#' return
     false
@@ -129,10 +124,8 @@ def format_line(line, max_line_length)
       # line will be overridden here, reseting it
       formatted_line = '# ' + word
     end
-    if word == words.last
-      # When the loop reaches the final word, push the line to the array.
-      new_lines.push(formatted_line)
-    end
+    # When the loop reaches the final word, push the line to the array.
+    new_lines.push(formatted_line) if word == words.last
   end
   new_lines
 end
